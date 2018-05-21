@@ -58,4 +58,3 @@
 * Make sure to clean up unused caches
 * Add dynamic caching (with versioning) to cache everything in your app when visited/ fetched by the user
 
-

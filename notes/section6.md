@@ -52,3 +52,58 @@
 ## cache only
 
 * maybe useful for app shell if you assume it's not going to change 
+
+
+## advanced caching assignment notes
+
+* Identify the strategy we currently use in the Service Worker (for caching)
+* Replace it with a "Network only" strategy => Clear Storage (in Dev Tools), reload & try using your app offline
+* Replace it with a "Cache only" strategy => Clear Storage (in Dev Tools), reload & try using your app offline
+* Replace it with "Network, cache fallback" strategy =>  => Clear Storage (in Dev Tools), reload & try using your app offline
+* Replace it with a "Cache, then network" strategy => Clear Storage (in Dev Tools), reload & try using your app offline
+* Add "Routing"/ URL Parsing to pick the right strategies: Try to implement "Cache, then network", "Cache with network fallback" and "Cache only" (all of these, with appropriate URL selection)
+
+## better way for static urls 
+
+* I don't think Array.prototype.includes existed?
+	* nevermind he made a helper because of root 
+
+## fallback
+
+* don't use the event.request.url.indexOf('/help')
+* use request headers
+	* `event.request.headers.get('accept').includes('text/html')`
+	* can do this as a fallback image or css file 
+	* as long as you precache the fallback file for the filetype
+
+## POST requests
+
+* don't work straightforward like this
+* caches response not request
+
+## clean caches
+
+* dynamic cache especially gets big 
+* recursive trimCache function that removes oldest things 
+* cache.keys() and cache.delete() return promises
+* probably want this in activate or install 
+	* could do every time you add something to cache
+* you can always do this in regular js code 
+
+## deleting/uninstalling a sw
+
+```
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations()
+      .then(function(registrations){
+        for (var i = 0; i < registrations.length; i++) {
+          registrations[i].unregister()
+        }
+      })
+  }
+```
+
+* where is `Array.prototype.forEach`
+* you can do this to clear the cache (for forcing refresh)
+* 'you're a true caching monster now'
+	* thanks Max
