@@ -1,14 +1,19 @@
-var CACHE_STATIC_NAME = 'static-v13'
-var CACHE_DYNAMIC_NAME = 'dynamic-v2'
+importScripts('/src/js/idb.js');
+importScripts('/src/js/utility.js');
+
+var CACHE_STATIC_NAME = 'static-v15'
+var CACHE_DYNAMIC_NAME = 'dynamic-v3'
+
 var STATIC_FILES = [
   				'/',
   				'/manifest.json',
   				'/index.html',
   				'/offline.html',  				
   				'/src/js/app.js',
-  				'/src/js/feed.js',  				
-  				'/src/js/promise.js',
-  				'/src/js/fetch.js',
+          '/src/js/feed.js',          
+          '/src/js/promise.js',
+          '/src/js/fetch.js',
+          '/src/js/idb.js',
   				'/src/js/material.min.js',
   				'/src/css/app.css',
   				'/src/css/feed.css',
@@ -17,6 +22,12 @@ var STATIC_FILES = [
   				'https://fonts.googleapis.com/css?family=Roboto:400,700',
   				'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css',
   			]
+
+var dbPromise = idb.open('posts-store', 1, function(db){
+  if (!db.objectStoreNames.contains('posts')) {
+    db.createObjectStore('posts', {keyPath: 'id'});
+  }
+})
 
 // function trimCache(cacheName, maxItems) {
 // 	caches.open(cacheName) 
@@ -74,18 +85,26 @@ function isInArray(string, array) {
 
 
 self.addEventListener('fetch', function(event) {
-  var url = 'https://httpbin.org/get'
+  var url = 'https://pwagram-33c29.firebaseio.com/posts'
+
+
   if (event.request.url.indexOf(url) > -1) {
 	  event.respondWith(
-	  	caches.open(CACHE_DYNAMIC_NAME)
-	  		.then(function(cache){
-	  			return fetch(event.request)
+	  			fetch(event.request)
 	  				.then(function(res) {
-	  					// trimCache(CACHE_DYNAMIC_NAME, 10)
-	  					cache.put(event.request, res.clone())
+              var clonedRes = res.clone();
+              clearAllData('posts')
+                .then(function(){
+                  return clonedRes.json()
+                })
+                .then(function(data){
+                  for (var key in data){
+                    writeData('posts', data[key])
+                  }
+                })
 	  					return res;
-	  				});
-	  		})
+	  				})
+	
 	  	);
   } else if (isInArray(event.request.url, STATIC_FILES)) {
   	event.respondWith(
@@ -120,55 +139,3 @@ self.addEventListener('fetch', function(event) {
 	  );
   }
 });
-
-// // network then cache
-// self.addEventListener('fetch', function(event) {
-//   event.respondWith(
-//   	fetch(event.request)
-//   		.then(function(res){
-//   			return caches.open(CACHE_DYNAMIC_NAME)
-// 				.then(function(cache){
-// 					cache.put(event.request.url, res.clone());
-// 					return res 
-// 				})
-//   		})
-//   		.catch(function(err){
-// 		  	return caches.match(event.request)
-//   		})
-//   );
-// });
-
-// cache then network then fallback
-// self.addEventListener('fetch', function(event) {
-//   event.respondWith(
-//   	caches.match(event.request)
-//   		.then(function(response) {
-//   			if (response) {
-//   				return response;
-//   			} else {
-//   				return fetch(event.request)
-//   					.then(function(res){
-//   						caches.open(CACHE_DYNAMIC_NAME)
-//   							.then(function(cache){
-//   								cache.put(event.request.url, res.clone());
-//   								return res 
-//   							})
-
-//   					})
-//   					.catch(function(err){
-//   						return caches.open(CACHE_STATIC_NAME)
-//   							.then(function(cache){
-//   								return cache.match('/offline.html');
-//   							})
-//   					}); 
-//   			}
-//   		})
-//   );
-// });
-
-//cache only $$
-// self.addEventListener('fetch', function(event) {
-//   event.respondWith(
-//   	caches.match(event.request)
-//   );
-// });
