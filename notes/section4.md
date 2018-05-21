@@ -1,6 +1,6 @@
-#fetch and promises refresher 
+# fetch and promises refresher 
 
-##Fetch basics
+## Fetch basics
 
 * ajax uses XMLHttpRequest()
 * fetch is an alternative 
@@ -39,14 +39,14 @@
 
 *I did this with three different buttons and output sections, see ../section4_assignment*
 
-##Links & Resources (from 4.55)
+## Links & Resources (from 4.55)
 
-###Want to dive deeper into Promises?
+### Want to dive deeper into Promises?
 
 * [Introduction to Promises (MDN)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise)
 * [Introduction to Promises (Google)](https://developers.google.com/web/fundamentals/getting-started/primers/promises)
 
-###Dive deeper into the Fetch API:
+### Dive deeper into the Fetch API:
 
 * [An Overview on MDN](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
 * [Detailed Usage Guide (MDN)](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch)

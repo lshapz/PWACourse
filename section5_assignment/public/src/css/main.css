@@ -1,0 +1,13 @@
+.box {
+  margin: auto;
+  width: 100px;
+  height: 100px;
+  background-color: blue;
+  border: 1px solid red;
+  display: none;
+}
+
+.box.visible {
+  display: block;
+}
+
