@@ -1,8 +1,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v22';
-var CACHE_DYNAMIC_NAME = 'dynamic-v2';
+var CACHE_STATIC_NAME = 'static-v3';
+var CACHE_DYNAMIC_NAME = 'dynamic-v3';
 var STATIC_FILES = [
   '/',
   '/index.html',
@@ -74,7 +74,7 @@ function isInArray(string, array) {
 
 self.addEventListener('fetch', function (event) {
 
-  var url = 'https://pwagram-99adf.firebaseio.com/posts';
+  var url = 'https://pwagram-33c29.firebaseio.com/posts';
   if (event.request.url.indexOf(url) > -1) {
     event.respondWith(fetch(event.request)
       .then(function (res) {
@@ -180,3 +180,42 @@ self.addEventListener('fetch', function (event) {
 //     fetch(event.request)
 //   );
 // });
+
+self.addEventListener('sync', function(event){
+  console.log('[SW] background sync', event)
+  if (event.tag === 'sync-new-posts') {
+    console.log('[SW], Syncing New Posts')
+    event.waitUntil(
+      readAllData('sync-posts')
+        .then(function(data){
+          console.log('data', data)
+          for (var dt of data) {
+              console.log('dt', dt)
+              console.log('dt', dt.id)
+              fetch('https://pwagram-33c29.firebaseio.com/posts.json', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                      id: dt.id,
+                      title: dt.title,
+                      location: dt.location,
+                      image: 'http://www.zastavki.com/pictures/originals/2014/Animals___Cats_Angry_black_cat_081068_.jpg'
+                  })
+              })
+              .then(function(res){
+                console.log('sent data to firebase', res)
+                if (res.ok) {
+                  deleteItemFromData('sync-posts', dt.id)
+                }
+              })
+              .catch(function(err){
+                console.error('Error while sending data', err)
+              })
+            }
+          })
+    )
+  }
+})
