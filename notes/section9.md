@@ -20,6 +20,29 @@
 
 * create a new table just for the sync posts (so no server/client confusing)
 
-
 *just spent 20+ minutes looking for a 'bug' that was an 'in' where Max wrote 'of' UGH* 
+
+## Periodic sync 
+
+* not supported yet (?)
+* not about connectivity 
+* something like twitter/facebook/insta, lots of new data all the time
+  * periodically fetch new data even while tab closed
+  * faster load time once you actually load back up
+* register periodic sync task including schedule in SW
+* schedule triggers "periodicsync" event which triggers SW to request server
+
+## server side code 
+
+* we've been using http-server dummy node stuff
+* firebase has cloud functions 
+  * can act like a REST API 
+  * you can use a regular node too 
+
+#Useful Resources & Links 
+
+* [Introducing Background Sync](https://developers.google.com/web/updates/2015/12/background-sync)
+* [A Basic Guide to Background Sync](https://ponyfoo.com/articles/backgroundsync)
+* [More about Firebase Cloud Functions](https://firebase.google.com/docs/functions/)
+
 
