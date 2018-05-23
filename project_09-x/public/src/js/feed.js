@@ -65,7 +65,7 @@ function clearCards() {
 }
 
 function sendData() {
-  fetch('https://pwagram-33c29.firebaseio.com/posts.json', {
+  fetch('https://us-central1-pwagram-33c29.cloudfunctions.net/storePostData', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
