@@ -32,3 +32,28 @@
 
 * application level, not page level
 * action clicks need to be in SW in case not running
+* notification close is a good chance to send analytics 
+
+## Push
+
+* multi step process 
+* see screenshot `section10.148.push_diagram.png`
+* subscriptions - in app.js
+* VAPID WebPush jwt claims 
+  * push messages are sent to an endpoint on a server
+  * need to make sure only our app is being listened to
+  * private and public key
+* webpush.setVapidDetails(email, public, private)
+* Firebase has .forEach for database objects!
+
+
+# Useful Resources and Links 
+
+
+* [More about Web Push by Google](https://developers.google.com/web/fundamentals/engage-and-retain/push-notifications/)
+* [More about VAPID](https://blog.mozilla.org/services/2016/04/04/using-vapid-with-webpush/)
+* [More about VAPID by Google](https://developers.google.com/web/updates/2016/07/web-push-interop-wins)
+* [The web-push npm Package](https://github.com/web-push-libs/web-push)
+* [More about showNotification (display Notifications from Service Workers)](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification)
+* [The Notification API](https://developer.mozilla.org/en/docs/Web/API/notification)
+* [The Push API](https://developer.mozilla.org/en/docs/Web/API/Push_API)

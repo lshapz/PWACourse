@@ -24,21 +24,6 @@ window.addEventListener('beforeinstallprompt', function(event) {
   deferredPrompt = event;
   return false;
 });
-
-
-function askForNotificationPermission() {
-  Notification.requestPermission(function(result) {
-    console.log('User choice', result)
-    if (result !== "granted") {
-      console.log('notifications forbidden')
-    } else {
-      displayConfirmNotification()
-      // Notification
-      // hide button 
-    }
-
-  }) 
-}
  
 function displayConfirmNotification() {
   var options = {
@@ -60,12 +45,68 @@ function displayConfirmNotification() {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.ready
       .then(function(swreg){
-        swreg.showNotification('[SW] Subscribed!', options)
+        swreg.showNotification('[Server] Subscribed!', options)
       })
 
   }
   // new Notification('Subscribed!', options)
 }
+
+function configurePushSub(){
+  if (!'serviceWorker' in navigator) {
+    return
+  }
+  var reg 
+  navigator.serviceWorker.ready
+    .then(function(swreg){
+      reg = swreg
+      return swreg.pushManager.getSubscription()
+    })
+    .then(function(sub){
+      if (sub === null) {
+        var vapidPublicKey = 'BJr5cDMeynODY-AjkqkSTGHH7t0lX7H-Rcn51lU0qghafp6T-TBM0q7KHnkPZXGeK5G4j7aHZ-uKEbJqRmTswwo'
+        var convertedPublicKey = urlBase64ToUint8Array(vapidPublicKey)
+        return reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: convertedPublicKey
+        })
+      } else {
+
+      }
+    })
+    .then(function(newSub){
+      return fetch('https://pwagram-33c29.firebaseio.com/subscriptions.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(newSub)
+      })
+    })
+    .then(function(res){
+      if (res.ok) {
+        displayConfirmNotification()
+      }
+    })
+    .catch(function(err){
+      console.error(err)
+    })
+}
+
+function askForNotificationPermission() {
+  Notification.requestPermission(function(result) {
+    console.log('User choice', result)
+    if (result !== "granted") {
+      console.log('notifications forbidden')
+    } else {
+      configurePushSub()
+      // displayConfirmNotification()
+    }
+
+  }) 
+}
+
 
 if ('Notification' in window) {
   for (var i = 0; i < enableNotificationsButtons.length; i++) {

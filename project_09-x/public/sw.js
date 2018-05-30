@@ -1,7 +1,7 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v3';
+var CACHE_STATIC_NAME = 'static-v9';
 var CACHE_DYNAMIC_NAME = 'dynamic-v3';
 var STATIC_FILES = [
   '/',
@@ -205,10 +205,10 @@ self.addEventListener('sync', function(event){
               })
               .then(function(res){
                 console.log('sent data to firebase', res)
-                if (res.ok) {
+                if (res.ok || res.status === 500) {
                   res.json()
                     .then(function(resData){
-                      deleteItemFromData('sync-posts', resData.id)
+                      deleteItemFromData('sync-posts', resData.id ? resData.id : dt.id)
                     })
                 }
               })
@@ -230,8 +230,51 @@ self.addEventListener('notificationclick', function(event){
     console.log('[SW] Confirm chosen')
   } else {
     console.log(action)
+
+    event.waitUntil(
+      clients.matchAll()
+        .then(function(clis){
+          var client = clis.find(function(c){
+            return c.visibilityState = 'visible'
+          })
+          if (client !== undefined){
+            client.navigate(notification.data.url)
+            client.focus()
+          } else {
+            clients.openWindow(notification.data.url)
+          }
+        })
+    )
   }
 
   notification.close()
+
+})
+
+self.addEventListener('notificationclose', function(event){
+  console.log('notification was closed', event);
+})
+
+self.addEventListener('push', function(event){
+  console.log('push notification', event);
+  var data = {title: '[SW] New Notification From', content: "[SW] NEW", openUrl: '/'}
+
+  if (event.data) {
+    data = JSON.parse(event.data.text())
+  }
+
+  var options = {
+    body: data.content,
+    icon: '/src/images/icons/app-icon-96x96.png',
+    badge: '/src/images/icons/app-icon-96x96.png',
+    data: {
+      url: data.openUrl,
+
+    }
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, options)
+  )
 
 })
