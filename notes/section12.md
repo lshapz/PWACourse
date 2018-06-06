@@ -57,7 +57,7 @@
 * PWA checklist 
 * performance hints 
 
-#Useful Resources and links 
+# Useful Resources and links 
 
 * [Official webpage/ docs](https://workboxjs.org/)
 * [Configuring Workbox](https://workboxjs.org/reference-docs/latest/module-workbox-build.html#.Configuration)
